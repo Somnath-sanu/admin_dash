@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DummyJSON Product Dashboard
 
-## Getting Started
+A small protected admin dashboard built with Next.js, TypeScript, Axios, and the [DummyJSON API](https://dummyjson.com).
 
-First, run the development server:
+## Run locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000` and log in with:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Username: `emilys`
+- Password: `emilyspass`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Features
 
-## Learn More
+- JWT login/logout and protected product routes.
+- Responsive product table/cards with API pagination.
+- URL-based `page`, `limit`, `q`, `category`, `sortBy`, and `order` values.
+- Debounced search, category filter, and title/price/rating sorting.
+- Product details, reviews, add/edit forms, and delete confirmation.
+- Loading, empty, error, and retry states.
 
-To learn more about Next.js, take a look at the following resources:
+## Implementation notes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+All remote calls use the shared Axios client in `lib/api/client.ts`; it adds the stored access token and converts API failures into one error shape.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+DummyJSON does not support search and category filtering together. The dashboard makes them mutually exclusive: searching clears/disables the category, and selecting a category clears search. This keeps API pagination totals accurate.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+DummyJSON simulates add, edit, and delete responses but does not persist them. After a successful mutation, the app immediately shows the mock API response or deletion confirmation. Refreshing reloads the original API data.
