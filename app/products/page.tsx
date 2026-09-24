@@ -1,4 +1,6 @@
 import { LogoutButton } from "@/components/auth/logout-button";
+import { ProductCatalog } from "@/components/products/product-catalog";
+import { Suspense } from "react";
 
 export default function ProductsPage() {
   return (
@@ -13,9 +15,11 @@ export default function ProductsPage() {
           </div>
           <LogoutButton />
         </header>
-        <section className="mt-8 rounded-lg border border-dashed border-zinc-300 bg-white p-6 text-sm text-zinc-600">
-          Product browsing will be added in Stage 2.
-        </section>
+        <div className="mt-8">
+          <Suspense fallback={<section className="grid min-h-72 place-items-center rounded-lg border border-zinc-200 bg-white text-sm text-zinc-600">Loading products…</section>}>
+            <ProductCatalog />
+          </Suspense>
+        </div>
       </div>
     </main>
   );
