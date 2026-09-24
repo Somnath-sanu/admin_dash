@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import type { Product } from "@/lib/api/products";
 
@@ -19,7 +20,9 @@ export function ProductCards({ products }: { products: Product[] }) {
           />
           <div className="min-w-0 flex-1">
             <h2 className="truncate font-medium text-zinc-900">
-              {product.title}
+              <Link className="hover:text-indigo-600" href={`/products/${product.id}`}>
+                {product.title}
+              </Link>
             </h2>
             <p className="mt-1 text-sm capitalize text-zinc-600">
               {product.category}

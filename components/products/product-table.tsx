@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import type { Product } from "@/lib/api/products";
 
@@ -27,9 +28,9 @@ export function ProductTable({ products }: { products: Product[] }) {
                     src={product.thumbnail}
                     width={44}
                   />
-                  <span className="font-medium text-zinc-900">
+                  <Link className="font-medium text-zinc-900 hover:text-indigo-600" href={`/products/${product.id}`}>
                     {product.title}
-                  </span>
+                  </Link>
                 </div>
               </td>
               <td className="px-4 py-3 capitalize text-zinc-600">

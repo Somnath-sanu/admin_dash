@@ -17,6 +17,16 @@ export type ProductPage = {
   limit: number;
 };
 
+export type ProductDetail = Product & {
+  description: string;
+  images: string[];
+  reviews: {
+    rating: number;
+    comment: string;
+    reviewerName: string;
+  }[];
+};
+
 export type GetProductsOptions = {
   limit: number;
   skip: number;
@@ -65,4 +75,12 @@ export async function getCategories() {
       ? { slug: category, name: category }
       : category,
   );
+}
+
+export async function getProduct(id: number, signal?: AbortSignal) {
+  const { data } = await apiClient.get<ProductDetail>(`/products/${id}`, {
+    signal,
+  });
+
+  return data;
 }
