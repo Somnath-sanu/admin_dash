@@ -20,14 +20,49 @@ export type ProductPage = {
 export type GetProductsOptions = {
   limit: number;
   skip: number;
+  query?: string;
+  category?: string;
+  sortBy?: "title" | "price" | "rating";
+  order?: "asc" | "desc";
   signal?: AbortSignal;
 };
 
-export async function getProducts({ limit, skip, signal }: GetProductsOptions) {
-  const { data } = await apiClient.get<ProductPage>("/products", {
-    params: { limit, skip },
+export type Category = {
+  slug: string;
+  name: string;
+};
+
+export async function getProducts({
+  limit,
+  skip,
+  query,
+  category,
+  sortBy,
+  order,
+  signal,
+}: GetProductsOptions) {
+  const endpoint = query
+    ? "/products/search"
+    : category
+      ? `/products/category/${category}`
+      : "/products";
+
+  const { data } = await apiClient.get<ProductPage>(endpoint, {
+    params: { limit, skip, q: query || undefined, sortBy, order },
     signal,
   });
 
   return data;
+}
+
+export async function getCategories() {
+  const { data } = await apiClient.get<Array<Category | string>>(
+    "/products/categories",
+  );
+
+  return data.map((category) =>
+    typeof category === "string"
+      ? { slug: category, name: category }
+      : category,
+  );
 }
