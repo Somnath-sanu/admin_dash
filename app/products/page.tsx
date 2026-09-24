@@ -1,6 +1,7 @@
 import { LogoutButton } from "@/components/auth/logout-button";
 import { ProductCatalog } from "@/components/products/product-catalog";
 import { Suspense } from "react";
+import Link from "next/link";
 
 export default function ProductsPage() {
   return (
@@ -13,7 +14,7 @@ export default function ProductsPage() {
             </p>
             <h1 className="mt-1 text-2xl font-semibold">Products</h1>
           </div>
-          <LogoutButton />
+          <div className="flex gap-3"><Link className="rounded bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white" href="/products/new">Add product</Link><LogoutButton /></div>
         </header>
         <div className="mt-8">
           <Suspense fallback={<section className="grid min-h-72 place-items-center rounded-lg border border-zinc-200 bg-white text-sm text-zinc-600">Loading products…</section>}>

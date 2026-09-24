@@ -7,7 +7,11 @@ import { useParams } from "next/navigation";
 
 import { LogoutButton } from "@/components/auth/logout-button";
 import { ApiError } from "@/lib/api/client";
-import { getProduct, type ProductDetail } from "@/lib/api/products";
+import {
+  deleteProduct,
+  getProduct,
+  type ProductDetail,
+} from "@/lib/api/products";
 
 type Result = { key: string; product: ProductDetail };
 type ErrorState = { key: string; notFound: boolean };
@@ -19,6 +23,7 @@ export function ProductDetails() {
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState<ErrorState | null>(null);
   const [retry, setRetry] = useState(0);
+  const [deleted, setDeleted] = useState(false);
   const key = `${params.id}|${retry}`;
 
   useEffect(() => {
@@ -50,6 +55,19 @@ export function ProductDetails() {
   const notFound = !isValidId || (error?.key === key && error.notFound);
 
   if (notFound) return <ProductNotFound />;
+
+  if (deleted) {
+    return (
+      <ProductPageLayout>
+        <section className="rounded-lg border border-green-200 bg-green-50 p-6 text-center">
+          <h1 className="text-xl font-semibold">Product deleted</h1>
+          <p className="mt-2 text-sm text-zinc-600">
+            DummyJSON simulates this change, so it resets after refresh.
+          </p>
+        </section>
+      </ProductPageLayout>
+    );
+  }
 
   if (error?.key === key) {
     return (
@@ -103,6 +121,10 @@ export function ProductDetails() {
             <p className="mt-2 text-sm text-zinc-600">
               Rating: {product.rating.toFixed(1)} / 5 · Stock: {product.stock}
             </p>
+            <ProductActions
+              onDeleted={() => setDeleted(true)}
+              product={product}
+            />
           </div>
         </div>
 
@@ -175,5 +197,52 @@ function ProductNotFound() {
         </p>
       </section>
     </ProductPageLayout>
+  );
+}
+
+function ProductActions({
+  product,
+  onDeleted,
+}: {
+  product: ProductDetail;
+  onDeleted: () => void;
+}) {
+  const [deleting, setDeleting] = useState(false);
+  const [error, setError] = useState("");
+
+  async function removeProduct() {
+    if (deleting || !window.confirm(`Delete ${product.title}?`)) return;
+
+    setDeleting(true);
+    setError("");
+    try {
+      await deleteProduct(product.id);
+      onDeleted();
+    } catch {
+      setError("Unable to delete product. Please try again.");
+      setDeleting(false);
+    }
+  }
+
+  return (
+    <div className="mt-5 flex gap-3">
+      <Link
+        className="rounded border border-zinc-300 px-3 py-1.5 text-sm"
+        href={`/products/${product.id}/edit`}
+      >
+        Edit
+      </Link>
+      <button
+        className="rounded bg-red-600 px-3 py-1.5 text-sm text-white disabled:opacity-50 cursor-pointer"
+        disabled={deleting}
+        onClick={removeProduct}
+        type="button"
+      >
+        {deleting ? "Deleting..." : "Delete"}
+      </button>
+      {error ? (
+        <p className="self-center text-sm text-red-600">{error}</p>
+      ) : null}
+    </div>
   );
 }

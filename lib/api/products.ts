@@ -27,6 +27,14 @@ export type ProductDetail = Product & {
   }[];
 };
 
+export type ProductInput = {
+  title: string;
+  category: string;
+  price: number;
+  stock: number;
+  description: string;
+};
+
 export type GetProductsOptions = {
   limit: number;
   skip: number;
@@ -83,4 +91,18 @@ export async function getProduct(id: number, signal?: AbortSignal) {
   });
 
   return data;
+}
+
+export async function addProduct(product: ProductInput) {
+  const { data } = await apiClient.post<ProductDetail>("/products/add", product);
+  return data;
+}
+
+export async function updateProduct(id: number, product: ProductInput) {
+  const { data } = await apiClient.put<ProductDetail>(`/products/${id}`, product);
+  return data;
+}
+
+export async function deleteProduct(id: number) {
+  await apiClient.delete(`/products/${id}`);
 }
